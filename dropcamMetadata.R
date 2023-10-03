@@ -60,7 +60,8 @@ algae <- drops %>%
   filter(grepl("GOPRO", Video_file))
 
 # Import habitat type shapes (not currently working in script)
-habs <- read_sf(dsn = "Kachemak_Subtidal_Benthic_Habitats")
+habs <- read_sf("data/Kachemak_Subtidal_Benthic_Habitats_shapes") %>%
+  st_transform("+proj=longlat +datum=WGS84")
 
 # Load basemap of KBAY
 kbay_basemap <- leaflet() %>% setView(lng = -151.45, lat = 59.55, zoom = 10)
@@ -70,8 +71,15 @@ kbay_basemap <- leaflet() %>% setView(lng = -151.45, lat = 59.55, zoom = 10)
 # MANIPULATE DATA                                                           ####
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+n <- length(unique(habs$Class))
+factorPal <- colorFactor(viridis(n, option = "D"), levels = unique(habs$Class))
 kbay_basemap %>% 
   addTiles() %>%
+  addPolygons(data = habs,
+              fillColor = ~factorPal(Class),
+              fillOpacity = 0.4,
+              label = ~Class,
+              stroke = FALSE) %>%
   addCircles(lng = drops$POINT_X, lat = drops$POINT_Y, 
              radius = 1,
              color = "blue",
@@ -81,7 +89,8 @@ kbay_basemap %>%
              radius = 1,
              color = "red",
              popup = paste("Substrate:", algae$Class, "<br>",
-                           "File:", algae$Video_file))
+                           "File:", algae$Video_file)) 
+  
 
 # write_csv(algae, "algaeGOPRO.csv")
 
@@ -92,3 +101,6 @@ kbay_basemap %>%
 
 # SCRATCH PAD ####
 
+# addLegend("bottomright", pal = factorPal, values = unique(habs$Class),
+# title = "Substrate Type",
+# opacity = 1)
