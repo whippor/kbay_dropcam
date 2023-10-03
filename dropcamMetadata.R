@@ -44,44 +44,46 @@ library(tidyverse)
 library(viridis)
 library(sf)
 library(leaflet)
+library(av)
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # READ IN AND PREPARE DATA                                                  ####
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
-# Import a point shapefile, only keep GOPRO video points
-drops <- read_sf(dsn = "Kachemak_underwater_dropcamera")
+# Import shapefile of GPS points for camera drops
+drops <- read_sf(dsn = "data/Kachemak_underwater_dropcamera_shapes")
   
-
+# subset for algal presence and GOPRO camera
 algae <- drops %>%
   filter(grepl("macroalgae", Class)) %>%
   filter(grepl("GOPRO", Video_file))
+
+# Import habitat type shapes (not currently working in script)
 habs <- read_sf(dsn = "Kachemak_Subtidal_Benthic_Habitats")
 
+# Load basemap of KBAY
 kbay_basemap <- leaflet() %>% setView(lng = -151.45, lat = 59.55, zoom = 10)
-
-kbay_basemap %>% 
-  addTiles() %>%
-  addCircles(lng = drops$POINT_X, lat = drops$POINT_Y, 
-                   radius = 1,
-             color = "blue",
-                   popup = paste("Substrate:", drops$Class, "<br>",
-                                 "File:", drops$Video_file)) %>%
-  addCircles(lng = algae$POINT_X, lat = algae$POINT_Y, 
-              radius = 1,
-              color = "red",
-              popup = paste("Substrate:", algae$Class, "<br>",
-                           "File:", algae$Video_file))
-  
-write_csv(algae, "algaeGOPRO.csv")
 
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # MANIPULATE DATA                                                           ####
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-plot(shape)
+kbay_basemap %>% 
+  addTiles() %>%
+  addCircles(lng = drops$POINT_X, lat = drops$POINT_Y, 
+             radius = 1,
+             color = "blue",
+             popup = paste("Substrate:", drops$Class, "<br>",
+                           "File:", drops$Video_file)) %>%
+  addCircles(lng = algae$POINT_X, lat = algae$POINT_Y, 
+             radius = 1,
+             color = "red",
+             popup = paste("Substrate:", algae$Class, "<br>",
+                           "File:", algae$Video_file))
+
+# write_csv(algae, "algaeGOPRO.csv")
 
 ############### SUBSECTION HERE
 
@@ -90,32 +92,3 @@ plot(shape)
 
 # SCRATCH PAD ####
 
-
-
-library('leaflet')
-
-# Fake data
-df <- data.frame(lng = c(-5, -10, -15, -20, 25),
-                 lat = c(8, 12, 33, 4, 18),
-                 size = c(200000, 100000, 800000, 250000, 350000),
-                 popup = c('A', 'B', 'C', 'D', 'E'),
-                 type = c('A', 'B', 'C', 'D', 'E'),
-                 stringsAsFactors = FALSE)
-
-# If you want to set your own colors manually:
-pal <- colorFactor(
-  palette = c('red', 'blue', 'green', 'purple', 'orange'),
-  domain = df$type
-)
-
-# If you want to use predefined palettes in the RColorBrewer package:
-# Call RColorBrewer::display.brewer.all() to see all possible palettes
-pal <- colorFactor(
-  palette = 'Dark2',
-  domain = df$type
-)
-
-leaflet(df) %>%
-  addTiles() %>%
-  addCircles(lng = ~lng, lat = ~lat, weight = 1, 
-             radius = ~size, popup = ~popup, color = ~pal(type))
