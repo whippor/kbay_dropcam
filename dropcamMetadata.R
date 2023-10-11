@@ -108,7 +108,7 @@ kbay_basemap %>%
 
 # SCRATCH PAD ####
   
-  color_practice <- read_csv("~/Documents/color_practice.csv") #inputting my own data set 
+#  color_practice <- read_csv("~/Documents/color_practice.csv") #inputting my own data set 
 
 # addLegend("bottomright", pal = factorPal, values = unique(habs$Class),
 # title = "Substrate Type",
