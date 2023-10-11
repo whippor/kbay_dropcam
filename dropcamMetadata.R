@@ -4,7 +4,7 @@
 # Script created 2023-10-02                                                   ##
 # Data source: Field, D; Malhotra, A; Holderied, K; Taylor, C -  NOAA         ##
 # R code prepared by Ross Whippo                                              ##
-# Last updated 2023-10-02                                                     ##
+# Last updated 2023-10-10                                                     ##
 #                                                                             ##
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -14,7 +14,8 @@
 # https://www.nodc.noaa.gov/archive/arc0152/0209109/2.2/data/0-data/NCCOS-Kachemak-Bay-Mapping_ArchiveDataPackage/
 
 # Required Files (check that script is loading latest version):
-# Kachemak_underwater_dropcamera.SHP
+# Kachemak_underwater_dropcamera_shapes
+# Kachemak_Subtidal_Benthic_Habitats_shapes
 
 # Associated Scripts:
 # FILE.R
@@ -44,6 +45,7 @@ library(tidyverse)
 library(viridis)
 library(sf)
 library(leaflet)
+library(leafem)
 library(av)
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -59,9 +61,12 @@ algae <- drops %>%
   filter(grepl("macroalgae", Class)) %>%
   filter(grepl("GOPRO", Video_file))
 
-# Import habitat type shapes (not currently working in script)
+# Import habitat type shapes
 habs <- read_sf("data/Kachemak_Subtidal_Benthic_Habitats_shapes") %>%
   st_transform("+proj=longlat +datum=WGS84")
+
+# Import bathymetry rasters
+bath1 <- read_sf("C:/Users/Ross.Whippo/Desktop/test.grd")
 
 # Load basemap of KBAY
 kbay_basemap <- leaflet() %>% setView(lng = -151.45, lat = 59.55, zoom = 10)
@@ -70,6 +75,7 @@ kbay_basemap <- leaflet() %>% setView(lng = -151.45, lat = 59.55, zoom = 10)
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # MANIPULATE DATA                                                           ####
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 
 n <- length(unique(habs$Class))
 factorPal <- colorFactor(viridis(n, option = "D"), levels = unique(habs$Class))
@@ -85,6 +91,7 @@ kbay_basemap %>%
              color = "blue",
              popup = paste("Substrate:", drops$Class, "<br>",
                            "File:", drops$Video_file)) %>%
+  addRasterRGB(data = )
   addCircles(lng = algae$POINT_X, lat = algae$POINT_Y, 
              radius = 1,
              color = "red",
