@@ -91,7 +91,6 @@ kbay_basemap %>%
              color = "blue",
              popup = paste("Substrate:", drops$Class, "<br>",
                            "File:", drops$Video_file)) %>%
-  addRasterRGB(data = )
   addCircles(lng = algae$POINT_X, lat = algae$POINT_Y, 
              radius = 1,
              color = "red",
