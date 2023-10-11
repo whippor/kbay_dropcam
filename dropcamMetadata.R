@@ -91,14 +91,14 @@ kbay_basemap %>%
              color = "blue",
              popup = paste("Substrate:", drops$Class, "<br>",
                            "File:", drops$Video_file)) %>%
-  addRasterRGB(data = )
+  # addRasterRGB(data = )
   addCircles(lng = algae$POINT_X, lat = algae$POINT_Y, 
              radius = 1,
              color = "red",
              popup = paste("Substrate:", algae$Class, "<br>",
                            "File:", algae$Video_file)) 
   
-
+ 
 # write_csv(algae, "algaeGOPRO.csv")
 
 ############### SUBSECTION HERE
@@ -107,6 +107,8 @@ kbay_basemap %>%
 #<<<<<<<<<<<<<<<<<<<<<<<<<<END OF SCRIPT>>>>>>>>>>>>>>>>>>>>>>>>#
 
 # SCRATCH PAD ####
+  
+  color_practice <- read_csv("~/Documents/color_practice.csv") #inputting my own data set 
 
 # addLegend("bottomright", pal = factorPal, values = unique(habs$Class),
 # title = "Substrate Type",
