@@ -108,6 +108,9 @@ abby17 <- abbysites %>%
 habs <- read_sf("data/Kachemak_Subtidal_Benthic_Habitats_shapes") %>%
   st_transform("+proj=longlat +datum=WGS84")
 
+# Import bathymetry rasters
+bath1 <- read_sf("data/Kachemak_bathymetry_tiff/exportImage.tiff")
+
 # Load basemap of KBAY
 kbay_basemap <- leaflet() %>% setView(lng = -151.45, lat = 59.55, zoom = 10)
 
