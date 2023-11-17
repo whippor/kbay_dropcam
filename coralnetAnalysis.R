@@ -47,7 +47,7 @@ coralnetdataraw <- read_csv("data/photoAnalysis/coralnetdata.csv")
 # remove NA columns
 coralnetdata <- coralnetdataraw %>%
   select_if(~!all(is.na(.))) %>%
-  mutate(drop = str_sub(coralnetdata$Name, end = -20)) %>%
+  mutate(drop = str_sub(coralnetdataraw$Name, end = -20)) %>%
   mutate(area = case_when(drop == "KBAY_2017_07_13_GOPRO_193_clip_8.mp4" ~ "1",
                           drop == "KBAY_2017_07_13_GOPRO_194_clip_9.mp4" ~ "1",
                           drop == "KBAY_GOPR0_2016_07_20_325_clip-5.mp4" ~ "1",
