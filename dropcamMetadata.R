@@ -4,7 +4,7 @@
 # Script created 2023-10-02                                                   ##
 # Data source: Field, D; Malhotra, A; Holderied, K; Taylor, C -  NOAA         ##
 # R code prepared by Ross Whippo                                              ##
-# Last updated 2023-10-10                                                     ##
+# Last updated 2023-11-16                                                     ##
 #                                                                             ##
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -62,10 +62,21 @@ depth <- KB_dropBathy %>%
   select(Video_file, Merged_1) %>%
   mutate(depth = round(Merged_1*-1, 2), .keep = "unused")
 
+# Import csv of coralnet annotations
+coralnetdata <- read_csv("data/photoAnalysis/coralnetdata.csv")
 
 # add depths to drops file
 drops <- drops %>%
   left_join(depth, by = "Video_file")
+
+# separate out all drops by year
+dropyear <- drops %>%
+  separate_wider_delim(Site_ID, delim = "_", names = c("year", "ID"),
+                       too_many = "drop")
+drop16 <- dropyear %>%
+  filter(year == 2016)
+drop17 <- dropyear %>%
+  filter(year == 2017)
 
 # subset for algal presence
 algae <- drops %>%
@@ -81,6 +92,17 @@ shallowgoproalgae <- drops %>%
   filter(depth < 40) %>%
   filter(grepl("macroalgae", Class)) %>%
   filter(grepl("GOPRO", Video_file))
+
+# identify drops that have been used in analysis
+usedvideo <- str_sub(coralnetdata$Name, end = -20)
+usedvideo <- unique(usedvideo)
+abbysites <- drops %>%
+  filter(Video_file %in% usedvideo) %>%
+  separate_wider_delim(Site_ID, delim = "_", names = c("year", "ID"))
+abby16 <- abbysites %>%
+  filter(year == 2016)
+abby17 <- abbysites %>%
+  filter(year == 2017)
 
 # Import habitat type shapes
 habs <- read_sf("data/Kachemak_Subtidal_Benthic_Habitats_shapes") %>%
@@ -109,28 +131,49 @@ kbay_basemap %>%
               fillOpacity = 0.4,
               label = ~Class,
               stroke = FALSE) %>%
+  addCircles(lng = algae$POINT_X, lat = algae$POINT_Y, 
+             radius = 150,
+             color = "limegreen",
+             opacity = 1,
+             fillOpacity = 1,
+             popup = paste("File:", algae$Video_file, "<br>",
+                           "Depth:", round(algae$depth,2), "m")) %>%
   addCircles(lng = drops$POINT_X, lat = drops$POINT_Y, 
              radius = 1,
              color = "blue",
              popup = paste("File:", algae$Video_file, "<br>",
                            "Depth:", round(drops$depth,2), "m")) %>%
-  addCircles(lng = algae$POINT_X, lat = algae$POINT_Y, 
+  addCircles(lng = abby16$POINT_X, lat = abby16$POINT_Y, 
              radius = 200,
              color = "yellow",
-             popup = paste("File:", algae$Video_file, "<br>",
-                           "Depth:",  round(algae$depth,2), "m")) %>%
-  addCircles(lng = goproalgae$POINT_X, lat = goproalgae$POINT_Y, 
-             radius = 200,
-             color = "red",
-             popup = paste("File:", algae$Video_file, "<br>",
-                           "Depth:",  round(goproalgae$depth,2), "m")) %>%
-  addCircles(lng = livealgae$POINT_X, lat = livealgae$POINT_Y,
-             radius = 100,
-             color = "limegreen",
              opacity = 1,
              fillOpacity = 1,
-             popup = paste("File:", livealgae$Video_file, "<br>",
-                           "Depth:",  round(livealgae$depth,2), "m")) 
+             popup = paste("File:", abby16$Video_file, "<br>",
+                           "Depth:",  round(abby16$depth,2), "m")) %>%
+  addCircles(lng = abby17$POINT_X, lat = abby17$POINT_Y,
+             radius = 200,
+             color = "red",
+             opacity = 1,
+             fillOpacity = 1,
+             popup = paste("File:", abby17$Video_file, "<br>",
+                           "Depth:",  round(abby17$depth,2), "m")) 
+
+# for all drop 2016 vs 2017
+
+addCircles(lng = drop16$POINT_X, lat = drop16$POINT_Y, 
+           radius = 200,
+           color = "yellow",
+           opacity = 1,
+           fillOpacity = 1,
+           popup = paste("File:", drop16$Video_file, "<br>",
+                         "Depth:",  round(drop16$depth,2), "m")) %>%
+  addCircles(lng = drop17$POINT_X, lat = drop17$POINT_Y,
+             radius = 200,
+             color = "red",
+             opacity = 1,
+             fillOpacity = 1,
+             popup = paste("File:", drop17$Video_file, "<br>",
+                           "Depth:",  round(drop17$depth,2), "m")) 
  
   # write_csv(algae, "algaeGOPRO.csv")
 
