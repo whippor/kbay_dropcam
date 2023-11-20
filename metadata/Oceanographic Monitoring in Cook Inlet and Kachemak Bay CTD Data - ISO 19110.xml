@@ -1,0 +1,525 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<gfc:FC_FeatureCatalogue xmlns:gfc="http://www.isotc211.org/2005/gfc" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:gmx="http://www.isotc211.org/2005/gmx" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gmi="http://www.isotc211.org/2005/gmi" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.isotc211.org/2005/gfc http://www.isotc211.org/2005/gfc/gfc.xsd">
+  <gmx:name>
+    <gco:CharacterString>Oceanographic Monitoring in Cook Inlet and Kachemak Bay, CTD Data, 2012-2022, Gulf Watch Alaska Environmental Drivers Component</gco:CharacterString>
+  </gmx:name>
+  <gmx:scope gco:nilReason="missing"/>
+  <gmx:versionNumber gco:nilReason="missing"/>
+  <gmx:versionDate gco:nilReason="missing">
+    <gco:Date xsi:nil="true"/>
+  </gmx:versionDate>
+  <gmx:language>
+    <gco:CharacterString>eng; USA</gco:CharacterString>
+  </gmx:language>
+  <gmx:characterSet>
+    <gmd:MD_CharacterSetCode codeList="http://www.ngdc.noaa.gov/metadata/published/xsd/schema/resources/Codelist/gmxCodelists.xml#MD_CharacterSetCode" codeListValue="utf8"/>
+  </gmx:characterSet>
+  <gfc:producer gco:nilReason="missing"/>
+  <gfc:featureType>
+    <gfc:FC_FeatureType>
+      <gfc:typeName>
+        <gco:LocalName>Aggregated CTD data from all transects and locations in Cook Inlet and Kachemak Bay.</gco:LocalName>
+      </gfc:typeName>
+      <gfc:definition>
+        <gco:CharacterString>These csv files contain processed CTD data (originating from the .hex files) in 1 meter vertical bins, which have been aggregated from sampling conducted at all times and transects for each year. There is one file per year.</gco:CharacterString>
+      </gfc:definition>
+      <gfc:code>
+        <gco:CharacterString>CookInletKachemakBay_CTD_[YEAR].csv</gco:CharacterString>
+      </gfc:code>
+      <gfc:isAbstract>
+        <gco:Boolean>false</gco:Boolean>
+      </gfc:isAbstract>
+      <gfc:featureCatalogue gco:nilReason="inapplicable"/>
+      <gfc:carrierOfCharacteristics>
+        <gfc:FC_FeatureAttribute>
+          <gfc:memberName gco:nilReason="missing"/>
+          <gfc:definition>
+            <gco:CharacterString>Short name or code number for the station where the data were collected along a given transect.</gco:CharacterString>
+          </gfc:definition>
+          <gfc:cardinality gco:nilReason="unknown"/>
+          <gfc:code>
+            <gco:CharacterString>Station</gco:CharacterString>
+          </gfc:code>
+          <gfc:valueType>
+            <gco:TypeName>
+              <gco:aName>
+                <gco:CharacterString>string</gco:CharacterString>
+              </gco:aName>
+            </gco:TypeName>
+          </gfc:valueType>
+        </gfc:FC_FeatureAttribute>
+      </gfc:carrierOfCharacteristics>
+      <gfc:carrierOfCharacteristics>
+        <gfc:FC_FeatureAttribute>
+          <gfc:memberName gco:nilReason="missing"/>
+          <gfc:definition>
+            <gco:CharacterString>Date of the CTD cast (yyyy-mm-dd).</gco:CharacterString>
+          </gfc:definition>
+          <gfc:cardinality gco:nilReason="unknown"/>
+          <gfc:code>
+            <gco:CharacterString>Date</gco:CharacterString>
+          </gfc:code>
+          <gfc:valueType>
+            <gco:TypeName>
+              <gco:aName>
+                <gco:CharacterString>date/time</gco:CharacterString>
+              </gco:aName>
+            </gco:TypeName>
+          </gfc:valueType>
+        </gfc:FC_FeatureAttribute>
+      </gfc:carrierOfCharacteristics>
+      <gfc:carrierOfCharacteristics>
+        <gfc:FC_FeatureAttribute>
+          <gfc:memberName gco:nilReason="missing"/>
+          <gfc:definition>
+            <gco:CharacterString>Time the data were recorded (hour:min, 24-hour clock).</gco:CharacterString>
+          </gfc:definition>
+          <gfc:cardinality gco:nilReason="unknown"/>
+          <gfc:code>
+            <gco:CharacterString>Time</gco:CharacterString>
+          </gfc:code>
+        </gfc:FC_FeatureAttribute>
+      </gfc:carrierOfCharacteristics>
+      <gfc:carrierOfCharacteristics>
+        <gfc:FC_FeatureAttribute>
+          <gfc:memberName gco:nilReason="missing"/>
+          <gfc:definition>
+            <gco:CharacterString>Latitude where the data were collected (decimal degrees north).</gco:CharacterString>
+          </gfc:definition>
+          <gfc:cardinality gco:nilReason="unknown"/>
+          <gfc:code>
+            <gco:CharacterString>Latitude_DD</gco:CharacterString>
+          </gfc:code>
+          <gfc:valueMeasurementUnit>
+            <gml:BaseUnit gml:id="gmlid_1">
+              <gml:identifier codeSpace="missing">decimal degrees north</gml:identifier>
+              <gml:unitsSystem/>
+            </gml:BaseUnit>
+          </gfc:valueMeasurementUnit>
+          <gfc:valueType>
+            <gco:TypeName>
+              <gco:aName>
+                <gco:CharacterString>decimal</gco:CharacterString>
+              </gco:aName>
+            </gco:TypeName>
+          </gfc:valueType>
+        </gfc:FC_FeatureAttribute>
+      </gfc:carrierOfCharacteristics>
+      <gfc:carrierOfCharacteristics>
+        <gfc:FC_FeatureAttribute>
+          <gfc:memberName gco:nilReason="missing"/>
+          <gfc:definition>
+            <gco:CharacterString>Longitude where the data were collected (decimal degrees west).</gco:CharacterString>
+          </gfc:definition>
+          <gfc:cardinality gco:nilReason="unknown"/>
+          <gfc:code>
+            <gco:CharacterString>Longitude_DD</gco:CharacterString>
+          </gfc:code>
+          <gfc:valueMeasurementUnit>
+            <gml:BaseUnit gml:id="gmlid_2">
+              <gml:identifier codeSpace="missing">decimal degrees west</gml:identifier>
+              <gml:unitsSystem/>
+            </gml:BaseUnit>
+          </gfc:valueMeasurementUnit>
+          <gfc:valueType>
+            <gco:TypeName>
+              <gco:aName>
+                <gco:CharacterString>decimal</gco:CharacterString>
+              </gco:aName>
+            </gco:TypeName>
+          </gfc:valueType>
+        </gfc:FC_FeatureAttribute>
+      </gfc:carrierOfCharacteristics>
+      <gfc:carrierOfCharacteristics>
+        <gfc:FC_FeatureAttribute>
+          <gfc:memberName gco:nilReason="missing"/>
+          <gfc:definition>
+            <gco:CharacterString>Abbreviated name or number of the transect during which the data were collected. Possible values: 'AlongBay', '7', '6', '3', '9', 'Subbays', '4'.</gco:CharacterString>
+          </gfc:definition>
+          <gfc:cardinality gco:nilReason="unknown"/>
+          <gfc:code>
+            <gco:CharacterString>Transect</gco:CharacterString>
+          </gfc:code>
+          <gfc:valueType>
+            <gco:TypeName>
+              <gco:aName>
+                <gco:CharacterString>string</gco:CharacterString>
+              </gco:aName>
+            </gco:TypeName>
+          </gfc:valueType>
+        </gfc:FC_FeatureAttribute>
+      </gfc:carrierOfCharacteristics>
+      <gfc:carrierOfCharacteristics>
+        <gfc:FC_FeatureAttribute>
+          <gfc:memberName gco:nilReason="missing"/>
+          <gfc:definition>
+            <gco:CharacterString>Short name or code number for the station where the data were collected along a given transect.</gco:CharacterString>
+          </gfc:definition>
+          <gfc:cardinality gco:nilReason="unknown"/>
+          <gfc:code>
+            <gco:CharacterString>StationN</gco:CharacterString>
+          </gfc:code>
+          <gfc:valueType>
+            <gco:TypeName>
+              <gco:aName>
+                <gco:CharacterString>string</gco:CharacterString>
+              </gco:aName>
+            </gco:TypeName>
+          </gfc:valueType>
+        </gfc:FC_FeatureAttribute>
+      </gfc:carrierOfCharacteristics>
+      <gfc:carrierOfCharacteristics>
+        <gfc:FC_FeatureAttribute>
+          <gfc:memberName gco:nilReason="missing"/>
+          <gfc:definition>
+            <gco:CharacterString>Name of the original CTD file these data were drawn from, composed of date (year_month-day), transect name, station number, and cast ID.</gco:CharacterString>
+          </gfc:definition>
+          <gfc:cardinality gco:nilReason="unknown"/>
+          <gfc:code>
+            <gco:CharacterString>File.Name</gco:CharacterString>
+          </gfc:code>
+          <gfc:valueType>
+            <gco:TypeName>
+              <gco:aName>
+                <gco:CharacterString>string</gco:CharacterString>
+              </gco:aName>
+            </gco:TypeName>
+          </gfc:valueType>
+        </gfc:FC_FeatureAttribute>
+      </gfc:carrierOfCharacteristics>
+      <gfc:carrierOfCharacteristics>
+        <gfc:FC_FeatureAttribute>
+          <gfc:memberName gco:nilReason="missing"/>
+          <gfc:definition>
+            <gco:CharacterString>Serial number of the CTD instrument used to collect the data. Possible values: 5028, 4141.</gco:CharacterString>
+          </gfc:definition>
+          <gfc:cardinality gco:nilReason="unknown"/>
+          <gfc:code>
+            <gco:CharacterString>CTD.serial</gco:CharacterString>
+          </gfc:code>
+        </gfc:FC_FeatureAttribute>
+      </gfc:carrierOfCharacteristics>
+      <gfc:carrierOfCharacteristics>
+        <gfc:FC_FeatureAttribute>
+          <gfc:memberName gco:nilReason="missing"/>
+          <gfc:definition>
+            <gco:CharacterString>Depth recorded at the station at the time data were recorded, in meters.</gco:CharacterString>
+          </gfc:definition>
+          <gfc:cardinality gco:nilReason="unknown"/>
+          <gfc:code>
+            <gco:CharacterString>Bottom.Depth</gco:CharacterString>
+          </gfc:code>
+          <gfc:valueMeasurementUnit>
+            <gml:BaseUnit gml:id="gmlid_3">
+              <gml:identifier codeSpace="missing">meter</gml:identifier>
+              <gml:unitsSystem/>
+            </gml:BaseUnit>
+          </gfc:valueMeasurementUnit>
+          <gfc:valueType>
+            <gco:TypeName>
+              <gco:aName>
+                <gco:CharacterString>integer</gco:CharacterString>
+              </gco:aName>
+            </gco:TypeName>
+          </gfc:valueType>
+        </gfc:FC_FeatureAttribute>
+      </gfc:carrierOfCharacteristics>
+      <gfc:carrierOfCharacteristics>
+        <gfc:FC_FeatureAttribute>
+          <gfc:memberName gco:nilReason="missing"/>
+          <gfc:definition>
+            <gco:CharacterString>Water pressure in decibels</gco:CharacterString>
+          </gfc:definition>
+          <gfc:cardinality gco:nilReason="unknown"/>
+          <gfc:code>
+            <gco:CharacterString>pressure_db</gco:CharacterString>
+          </gfc:code>
+          <gfc:valueMeasurementUnit>
+            <gml:BaseUnit gml:id="gmlid_4">
+              <gml:identifier codeSpace="missing">Decibels</gml:identifier>
+              <gml:unitsSystem/>
+            </gml:BaseUnit>
+          </gfc:valueMeasurementUnit>
+          <gfc:valueType>
+            <gco:TypeName>
+              <gco:aName>
+                <gco:CharacterString>decimal</gco:CharacterString>
+              </gco:aName>
+            </gco:TypeName>
+          </gfc:valueType>
+        </gfc:FC_FeatureAttribute>
+      </gfc:carrierOfCharacteristics>
+      <gfc:carrierOfCharacteristics>
+        <gfc:FC_FeatureAttribute>
+          <gfc:memberName gco:nilReason="missing"/>
+          <gfc:definition>
+            <gco:CharacterString>Depth below the surface at with the CTD reading was taken, in meters (readings typically at 1-meter intervals).</gco:CharacterString>
+          </gfc:definition>
+          <gfc:cardinality gco:nilReason="unknown"/>
+          <gfc:code>
+            <gco:CharacterString>Depth</gco:CharacterString>
+          </gfc:code>
+          <gfc:valueMeasurementUnit>
+            <gml:BaseUnit gml:id="gmlid_5">
+              <gml:identifier codeSpace="missing">meter</gml:identifier>
+              <gml:unitsSystem/>
+            </gml:BaseUnit>
+          </gfc:valueMeasurementUnit>
+          <gfc:valueType>
+            <gco:TypeName>
+              <gco:aName>
+                <gco:CharacterString>integer</gco:CharacterString>
+              </gco:aName>
+            </gco:TypeName>
+          </gfc:valueType>
+        </gfc:FC_FeatureAttribute>
+      </gfc:carrierOfCharacteristics>
+      <gfc:carrierOfCharacteristics>
+        <gfc:FC_FeatureAttribute>
+          <gfc:memberName gco:nilReason="missing"/>
+          <gfc:definition>
+            <gco:CharacterString>Temperature of the water in degrees Celsius, calibrated to the International Temperature Scale of 1990 (ITS-90).</gco:CharacterString>
+          </gfc:definition>
+          <gfc:cardinality gco:nilReason="unknown"/>
+          <gfc:code>
+            <gco:CharacterString>Temperature_ITS90_DegC</gco:CharacterString>
+          </gfc:code>
+          <gfc:valueMeasurementUnit>
+            <gml:BaseUnit gml:id="gmlid_6">
+              <gml:identifier codeSpace="missing">celsius</gml:identifier>
+              <gml:unitsSystem/>
+            </gml:BaseUnit>
+          </gfc:valueMeasurementUnit>
+          <gfc:valueType>
+            <gco:TypeName>
+              <gco:aName>
+                <gco:CharacterString>decimal</gco:CharacterString>
+              </gco:aName>
+            </gco:TypeName>
+          </gfc:valueType>
+        </gfc:FC_FeatureAttribute>
+      </gfc:carrierOfCharacteristics>
+      <gfc:carrierOfCharacteristics>
+        <gfc:FC_FeatureAttribute>
+          <gfc:memberName gco:nilReason="missing"/>
+          <gfc:definition>
+            <gco:CharacterString>Salinity of the water, measured in Practical Salinity Units (PSU).</gco:CharacterString>
+          </gfc:definition>
+          <gfc:cardinality gco:nilReason="unknown"/>
+          <gfc:code>
+            <gco:CharacterString>Salinity_PSU</gco:CharacterString>
+          </gfc:code>
+          <gfc:valueMeasurementUnit>
+            <gml:BaseUnit gml:id="gmlid_7">
+              <gml:identifier codeSpace="missing">Practical Salinity Units (PSU)</gml:identifier>
+              <gml:unitsSystem/>
+            </gml:BaseUnit>
+          </gfc:valueMeasurementUnit>
+          <gfc:valueType>
+            <gco:TypeName>
+              <gco:aName>
+                <gco:CharacterString>decimal</gco:CharacterString>
+              </gco:aName>
+            </gco:TypeName>
+          </gfc:valueType>
+        </gfc:FC_FeatureAttribute>
+      </gfc:carrierOfCharacteristics>
+      <gfc:carrierOfCharacteristics>
+        <gfc:FC_FeatureAttribute>
+          <gfc:memberName gco:nilReason="missing"/>
+          <gfc:definition>
+            <gco:CharacterString>Density of the water, calculated with in situ salinity, potential temperature, and pressure equal zero, minus 1000 kilograms per cubic meter.</gco:CharacterString>
+          </gfc:definition>
+          <gfc:cardinality gco:nilReason="unknown"/>
+          <gfc:code>
+            <gco:CharacterString>Density_sigma.theta.kg.m.3</gco:CharacterString>
+          </gfc:code>
+          <gfc:valueMeasurementUnit>
+            <gml:BaseUnit gml:id="gmlid_8">
+              <gml:identifier codeSpace="missing">kilograms per cubic meter</gml:identifier>
+              <gml:unitsSystem/>
+            </gml:BaseUnit>
+          </gfc:valueMeasurementUnit>
+          <gfc:valueType>
+            <gco:TypeName>
+              <gco:aName>
+                <gco:CharacterString>decimal</gco:CharacterString>
+              </gco:aName>
+            </gco:TypeName>
+          </gfc:valueType>
+        </gfc:FC_FeatureAttribute>
+      </gfc:carrierOfCharacteristics>
+      <gfc:carrierOfCharacteristics>
+        <gfc:FC_FeatureAttribute>
+          <gfc:memberName gco:nilReason="missing"/>
+          <gfc:definition>
+            <gco:CharacterString>Concentration of dissolved oxygen in micromoles per kilogram, as measured by an SBE 43 sensor.</gco:CharacterString>
+          </gfc:definition>
+          <gfc:cardinality gco:nilReason="unknown"/>
+          <gfc:code>
+            <gco:CharacterString>Oxygen_umol.kg</gco:CharacterString>
+          </gfc:code>
+          <gfc:valueMeasurementUnit>
+            <gml:BaseUnit gml:id="gmlid_9">
+              <gml:identifier codeSpace="missing">micromoles per kilogram</gml:identifier>
+              <gml:unitsSystem/>
+            </gml:BaseUnit>
+          </gfc:valueMeasurementUnit>
+          <gfc:valueType>
+            <gco:TypeName>
+              <gco:aName>
+                <gco:CharacterString>decimal</gco:CharacterString>
+              </gco:aName>
+            </gco:TypeName>
+          </gfc:valueType>
+        </gfc:FC_FeatureAttribute>
+      </gfc:carrierOfCharacteristics>
+      <gfc:carrierOfCharacteristics>
+        <gfc:FC_FeatureAttribute>
+          <gfc:memberName gco:nilReason="missing"/>
+          <gfc:definition>
+            <gco:CharacterString>Saturation of oxygen in the water as calculated using the "Garcia and Gordon" equations.</gco:CharacterString>
+          </gfc:definition>
+          <gfc:cardinality gco:nilReason="unknown"/>
+          <gfc:code>
+            <gco:CharacterString>Oxygen.Saturation_perc</gco:CharacterString>
+          </gfc:code>
+          <gfc:valueMeasurementUnit>
+            <gml:BaseUnit gml:id="gmlid_10">
+              <gml:identifier codeSpace="missing">percent</gml:identifier>
+              <gml:unitsSystem/>
+            </gml:BaseUnit>
+          </gfc:valueMeasurementUnit>
+          <gfc:valueType>
+            <gco:TypeName>
+              <gco:aName>
+                <gco:CharacterString>decimal</gco:CharacterString>
+              </gco:aName>
+            </gco:TypeName>
+          </gfc:valueType>
+        </gfc:FC_FeatureAttribute>
+      </gfc:carrierOfCharacteristics>
+      <gfc:carrierOfCharacteristics>
+        <gfc:FC_FeatureAttribute>
+          <gfc:memberName gco:nilReason="missing"/>
+          <gfc:definition>
+            <gco:CharacterString>Saturation of nitrogen in the water measured in milligrams per liter</gco:CharacterString>
+          </gfc:definition>
+          <gfc:cardinality gco:nilReason="unknown"/>
+          <gfc:code>
+            <gco:CharacterString>Nitrogen.saturation..mg.l.</gco:CharacterString>
+          </gfc:code>
+          <gfc:valueMeasurementUnit>
+            <gml:BaseUnit gml:id="gmlid_11">
+              <gml:identifier codeSpace="missing">milligrams per liter</gml:identifier>
+              <gml:unitsSystem/>
+            </gml:BaseUnit>
+          </gfc:valueMeasurementUnit>
+        </gfc:FC_FeatureAttribute>
+      </gfc:carrierOfCharacteristics>
+      <gfc:carrierOfCharacteristics>
+        <gfc:FC_FeatureAttribute>
+          <gfc:memberName gco:nilReason="missing"/>
+          <gfc:definition>
+            <gco:CharacterString>Photosynthetically-active radiation, as measured by a LI-COR biospherical PAR sensor.</gco:CharacterString>
+          </gfc:definition>
+          <gfc:cardinality gco:nilReason="unknown"/>
+          <gfc:code>
+            <gco:CharacterString>PAR.Irradiance</gco:CharacterString>
+          </gfc:code>
+          <gfc:valueMeasurementUnit>
+            <gml:BaseUnit gml:id="gmlid_12">
+              <gml:identifier codeSpace="missing">Photosynthetic photon flux density</gml:identifier>
+              <gml:unitsSystem/>
+            </gml:BaseUnit>
+          </gfc:valueMeasurementUnit>
+          <gfc:valueType>
+            <gco:TypeName>
+              <gco:aName>
+                <gco:CharacterString>decimal</gco:CharacterString>
+              </gco:aName>
+            </gco:TypeName>
+          </gfc:valueType>
+        </gfc:FC_FeatureAttribute>
+      </gfc:carrierOfCharacteristics>
+      <gfc:carrierOfCharacteristics>
+        <gfc:FC_FeatureAttribute>
+          <gfc:memberName gco:nilReason="missing"/>
+          <gfc:definition>
+            <gco:CharacterString>Fluorescence in milligrams per cubic meter, as measured by a WET Star meter from WET Labs.</gco:CharacterString>
+          </gfc:definition>
+          <gfc:cardinality gco:nilReason="unknown"/>
+          <gfc:code>
+            <gco:CharacterString>Fluorescence_mg_m3</gco:CharacterString>
+          </gfc:code>
+          <gfc:valueMeasurementUnit>
+            <gml:BaseUnit gml:id="gmlid_13">
+              <gml:identifier codeSpace="missing">milligrams per cubic meter</gml:identifier>
+              <gml:unitsSystem/>
+            </gml:BaseUnit>
+          </gfc:valueMeasurementUnit>
+          <gfc:valueType>
+            <gco:TypeName>
+              <gco:aName>
+                <gco:CharacterString>decimal</gco:CharacterString>
+              </gco:aName>
+            </gco:TypeName>
+          </gfc:valueType>
+        </gfc:FC_FeatureAttribute>
+      </gfc:carrierOfCharacteristics>
+      <gfc:carrierOfCharacteristics>
+        <gfc:FC_FeatureAttribute>
+          <gfc:memberName gco:nilReason="missing"/>
+          <gfc:definition>
+            <gco:CharacterString>Turbidity is a measurement of particles in a volume of seawater. Units are nephelometric turbidity units.</gco:CharacterString>
+          </gfc:definition>
+          <gfc:cardinality gco:nilReason="unknown"/>
+          <gfc:code>
+            <gco:CharacterString>Turbidity</gco:CharacterString>
+          </gfc:code>
+          <gfc:valueMeasurementUnit>
+            <gml:BaseUnit gml:id="gmlid_14">
+              <gml:identifier codeSpace="missing">nephelometric turbidity units (NTU)</gml:identifier>
+              <gml:unitsSystem/>
+            </gml:BaseUnit>
+          </gfc:valueMeasurementUnit>
+        </gfc:FC_FeatureAttribute>
+      </gfc:carrierOfCharacteristics>
+      <gfc:carrierOfCharacteristics>
+        <gfc:FC_FeatureAttribute>
+          <gfc:memberName gco:nilReason="missing"/>
+          <gfc:definition>
+            <gco:CharacterString>attenuation (loss of light) of a narrow, well collimated beam of light; beam attenuation due to particles; the particulate beam attenuation coefficient (cp)</gco:CharacterString>
+          </gfc:definition>
+          <gfc:cardinality gco:nilReason="unknown"/>
+          <gfc:code>
+            <gco:CharacterString>Beam_attenuation</gco:CharacterString>
+          </gfc:code>
+          <gfc:valueMeasurementUnit>
+            <gml:BaseUnit gml:id="gmlid_15">
+              <gml:identifier codeSpace="missing">1/m</gml:identifier>
+              <gml:unitsSystem/>
+            </gml:BaseUnit>
+          </gfc:valueMeasurementUnit>
+          <gfc:valueType>
+            <gco:TypeName>
+              <gco:aName>
+                <gco:CharacterString>decimal</gco:CharacterString>
+              </gco:aName>
+            </gco:TypeName>
+          </gfc:valueType>
+        </gfc:FC_FeatureAttribute>
+      </gfc:carrierOfCharacteristics>
+      <gfc:carrierOfCharacteristics>
+        <gfc:FC_FeatureAttribute>
+          <gfc:memberName gco:nilReason="missing"/>
+          <gfc:cardinality gco:nilReason="unknown"/>
+          <gfc:code>
+            <gco:CharacterString>Beam_transmission</gco:CharacterString>
+          </gfc:code>
+        </gfc:FC_FeatureAttribute>
+      </gfc:carrierOfCharacteristics>
+    </gfc:FC_FeatureType>
+  </gfc:featureType>
+</gfc:FC_FeatureCatalogue>

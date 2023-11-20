@@ -71,6 +71,7 @@ AllCTD <- CTD2012 %>%
 
 
 
+
 # CTD2016 <- read_csv("data/CTD/2016_LowerCookInlet_ProcessedCTD.csv")
 # CTD2017 <- read_csv("data/CTD/2017_Aggregatedfiles.csv", 
 #                        col_types = cols(latitude_DDN = col_double(), 
@@ -84,32 +85,63 @@ AllCTD <- AllCTD %>%
   mutate(salinity = `Salinity_PSU`) %>%
   mutate(turbidity = `Turbidity`) 
 
+
+# filter out non-Along Bay transect values
 CTDsummaryUngrouped <- AllCTD %>%
-  filter(Station %in% c("4_3", "9_6", "AlongBay_POGI") | grepl("AlongBay_\\d", Station)) %>%
+  filter(Station %in% c("9_6", "AlongBay_POGI") | grepl("AlongBay_\\d", Station)) %>%
   filter(Station != "AlongBay_14") %>%
+  filter(Transect != "9") %>%
   filter(`Depth` %in% c(1:40))
+# create list of Along Bay transect dates
+alongDates <- AllCTD %>%
+  filter(grepl("AlongBay_\\d", Station)) %>%
+  select(Date) %>%
+  distinct(Date)
+alongDates$Date <- ymd(alongDates$Date) 
+# filter out shared transects that didn't occur during Along Bay
+alongBay <- CTDsummaryUngrouped %>%
+  filter(Date %in% alongDates$Date)
+
+# order Stations from west to east
+alongBay <- alongBay %>%
+  mutate(Station = factor(Station, levels = c("AlongBay_POGI",
+                                                 "AlongBay_1",
+                                                 "AlongBay_2",
+                                                 "AlongBay_3",
+                                                 "AlongBay_4",
+                                                 "AlongBay_5",
+                                                 "9_6",
+                                                 "AlongBay_7",
+                                                 "AlongBay_8",
+                                                 "AlongBay_9",
+                                                 "AlongBay_10",
+                                                 "AlongBay_11",
+                                                 "AlongBay_12",
+                                                 "AlongBay_13")))
+
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # MANIPULATE DATA                                                           ####
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-# reduced to KB01 - KB13 along bay only and only top 40m
-CTDsummary <- AllCTD %>%
-  filter(Transect == "AlongBay") %>%
-  filter(Station %in% c("4_3", "9_6") | grepl("^KB", Station)) %>%
-  filter(Station != "KB04east") %>%
-  filter(`Depth (m)` %in% c(1:40)) %>%
-  group_by(Station, Month) %>%
-  summarise(across(latitude_DDN:turbidity, \(x) mean(x, na.rm = TRUE)))
+# histogram of number of measurements per station
+alongBay %>%
+  ggplot() +
+  geom_histogram(aes(x = Station), stat = "count")
 
-# turbidity by month
+# summarise means per month per Station
+CTDsummary <- alongBay %>%
+  group_by(Station, Month) %>%
+  summarise(across(temperature:turbidity, \(x) mean(x, na.rm = TRUE)))
+
+# turbidity by month line
 CTDsummary %>%
   ggplot(aes(x = Month, y = turbidity, color = Station, group = Station)) +
   scale_color_viridis(discrete = TRUE) +
   geom_point() +
   geom_smooth(aes(x = Month, y = turbidity), method = 'loess', se = FALSE) 
 
-# Station turbidity by month
+# Station turbidity by month individual
 CTDsummary %>%
   ggplot(aes(x = Month, y = turbidity)) +
   geom_point() +
@@ -126,14 +158,14 @@ CTDsummary %>%
 # annual mean station temp
 CTDsummary %>%
   group_by(Station) %>%
-  mutate(meanTemp = mean( `Temperature (deg C)`)) %>%
+  mutate(meanTemp = mean(temperature)) %>%
   ggplot(aes(x = Station, y = meanTemp)) +
   geom_point()
 
 # annual mean station sal
 CTDsummary %>%
   group_by(Station) %>%
-  mutate(meanSal = mean(`Salinity, Practical [PSU]`)) %>%
+  mutate(meanSal = mean(salinity)) %>%
   ggplot(aes(x = Station, y = meanSal)) +
   geom_point()
 
@@ -154,10 +186,9 @@ CTDsummaryUngrouped %>%
   geom_point() +
   geom_smooth(method = "lm")
 
-CTDsummaryUngrouped %>%
-  filter(year %in% c(2012, 2013)) %>%
-  filter(salinity > 28) %>%
-  filter(turbidity < 4) %>%
+
+# pairs 
+alongBay %>%
 ggpairs(columns = 26:28, aes(color = as.character(year), alpha = 0.4),
         lower = list(continuous = "smooth")) +
   theme_bw() +
@@ -165,7 +196,457 @@ ggpairs(columns = 26:28, aes(color = as.character(year), alpha = 0.4),
   scale_fill_viridis(discrete = TRUE, option = "D", begin = 0.2, end = 0.7)
 
 
-############### SUBSECTION HERE
+
+##### OUTLIERS
+
+# NO TEMP OUTLIERS
+
+quartiles <- quantile(alongBay$temperature, probs=c(.25, .75), na.rm = TRUE)
+IQR <- IQR(alongBay$temperature, na.rm = TRUE, type = 8)
+
+Lower <- quartiles[1] - 1.5*IQR
+Upper <- quartiles[2] + 1.5*IQR 
+
+data_no_outlier_temp <- subset(alongBay, alongBay$temperature > Lower & alongBay$temperature < Upper)
+
+temp_outliers <- anti_join(alongBay, data_no_outlier_temp)
+
+
+# SALINITY
+
+quartiles <- quantile(alongBay$salinity, probs=c(.25, .75), na.rm = TRUE)
+IQR <- IQR(alongBay$salinity, na.rm = TRUE, type = 8)
+
+Lower <- quartiles[1] - 1.5*IQR
+Upper <- quartiles[2] + 1.5*IQR 
+
+data_no_outlier_sal <- subset(alongBay, alongBay$salinity > Lower & alongBay$salinity < Upper)
+
+sal_outliers <- anti_join(alongBay, data_no_outlier_sal)
+
+# TURBIDITY
+
+quartiles <- quantile(alongBay$turbidity, probs=c(.25, .75), na.rm = TRUE)
+IQR <- IQR(alongBay$turbidity, na.rm = TRUE, type = 8)
+
+Lower <- quartiles[1] - 1.5*IQR
+Upper <- quartiles[2] + 1.5*IQR 
+
+data_no_outlier_turb <- subset(alongBay, alongBay$turbidity > Lower & alongBay$turbidity < Upper)
+
+turb_outliers <- anti_join(alongBay, data_no_outlier_turb)
+
+# no outliers by Station
+data_no_outlier_sal %>%
+  group_by(Station) %>%
+  tally()
+
+data_no_outlier_turb %>%
+  group_by(Station) %>%
+  tally()
+
+alongBay %>%
+  group_by(Station) %>%
+  tally()
+
+
+
+##################### ALL ABOVE WITH OUTLIERS REMOVED
+
+alongBay_nooutliers <- alongBay
+alongBay_nooutliers <- alongBay_nooutliers %>%
+  mutate(temperature_no = temperature) %>%
+  mutate(salinity_no = replace(salinity, salinity <= 29.6187, NA)) %>%
+  mutate(turbidity_no = replace(turbidity, turbidity >= 1.63320, NA))
+
+
+# histogram of number of measurements per station
+alongBay_nooutliers %>%
+  ggplot() +
+  geom_histogram(aes(x = Station), stat = "count")
+
+# summarise means per month per Station
+CTDsummary <- alongBay_nooutliers %>%
+  group_by(Station, Month) %>%
+  summarise(across(temperature_no:turbidity_no, \(x) mean(x, na.rm = TRUE)))
+
+# turbidity by month line
+CTDsummary %>%
+  ggplot(aes(x = Month, y = turbidity_no, color = Station, group = Station)) +
+  scale_color_viridis(discrete = TRUE) +
+  geom_point() +
+  geom_smooth(aes(x = Month, y = turbidity_no), method = 'loess', se = FALSE) 
+
+# Station turbidity by month individual
+CTDsummary %>%
+  ggplot(aes(x = Month, y = turbidity_no)) +
+  geom_point() +
+  geom_smooth() +
+  facet_wrap(~Station)
+
+# annual mean station turbidity
+CTDsummary %>%
+  group_by(Station) %>%
+  mutate(meanTurb = mean(turbidity_no)) %>%
+  ggplot(aes(x = Station, y = meanTurb)) +
+  geom_point()
+
+# annual mean station temp
+CTDsummary %>%
+  group_by(Station) %>%
+  mutate(meanTemp = mean(temperature_no)) %>%
+  ggplot(aes(x = Station, y = meanTemp)) +
+  geom_point()
+
+# Station temp by month individual
+CTDsummary %>%
+  ggplot(aes(x = Month, y = temperature_no)) +
+  geom_point() +
+  geom_smooth() +
+  facet_wrap(~Station)
+
+# annual mean station sal
+CTDsummary %>%
+  group_by(Station) %>%
+  mutate(meanSal = mean(salinity_no)) %>%
+  ggplot(aes(x = Station, y = meanSal)) +
+  geom_point()
+
+# Station sal by month individual
+CTDsummary %>%
+  ggplot(aes(x = Month, y = salinity_no)) +
+  geom_point() +
+  geom_smooth() +
+  facet_wrap(~Station)
+
+# correlations of abiotics
+
+alongBay_nooutliers %>%
+  ggplot(aes(x = temperature_no, y = salinity_no)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+alongBay_nooutliers %>%
+  ggplot(aes(x = temperature_no, y = turbidity_no)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+alongBay_nooutliers %>%
+  ggplot(aes(x = salinity_no, y = turbidity_no)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+
+# pairs 
+alongBay_nooutliers %>%
+  ggpairs(columns = 29:31, aes(color = as.character(year), alpha = 0.4),
+          lower = list(continuous = "smooth")) +
+  theme_bw() +
+  scale_color_viridis(discrete = TRUE, option = "D", begin = 0.2, end = 0.7) +
+  scale_fill_viridis(discrete = TRUE, option = "D", begin = 0.2, end = 0.7)
+
+
+
+
+###############################################################################
+# 2016-2017 ONLY                                                              #
+###############################################################################
+
+CTD2016 <- read_csv("data/CTD/CookInletKachemakBay_CTD_2016.csv", skip = 1)
+CTD2017 <- read_csv("data/CTD/CookInletKachemakBay_CTD_2017.csv", skip = 1)
+
+AllCTD <- CTD2016 %>%
+  bind_rows(list(CTD2017))
+
+AllCTD$Month <- month(AllCTD$Date, label= TRUE)
+AllCTD$year <- year(AllCTD$Date)
+AllCTD <- AllCTD %>%
+  mutate(temperature = `Temperature_ITS90_DegC`) %>%
+  mutate(salinity = `Salinity_PSU`) %>%
+  mutate(turbidity = `Turbidity`) 
+
+
+# filter out non-Along Bay transect values
+CTDsummaryUngrouped <- AllCTD %>%
+  filter(Station %in% c("9_6", "AlongBay_POGI") | grepl("AlongBay_\\d", Station)) %>%
+  filter(Station != "AlongBay_14") %>%
+  filter(Transect != "9") %>%
+  filter(`Depth` %in% c(1:40))
+# create list of Along Bay transect dates
+alongDates <- AllCTD %>%
+  filter(grepl("AlongBay_\\d", Station)) %>%
+  select(Date) %>%
+  distinct(Date)
+alongDates$Date <- ymd(alongDates$Date) 
+# filter out shared transects that didn't occur during Along Bay
+alongBay <- CTDsummaryUngrouped %>%
+  filter(Date %in% alongDates$Date)
+
+# order Stations from west to east
+alongBay <- alongBay %>%
+  mutate(Station = factor(Station, levels = c("AlongBay_POGI",
+                                              "AlongBay_1",
+                                              "AlongBay_2",
+                                              "AlongBay_3",
+                                              "AlongBay_4",
+                                              "AlongBay_5",
+                                              "9_6",
+                                              "AlongBay_7",
+                                              "AlongBay_8",
+                                              "AlongBay_9",
+                                              "AlongBay_10",
+                                              "AlongBay_11",
+                                              "AlongBay_12",
+                                              "AlongBay_13")))
+
+
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# MANIPULATE DATA                                                           ####
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+# histogram of number of measurements per station
+alongBay %>%
+  ggplot() +
+  geom_histogram(aes(x = Station), stat = "count")
+
+# summarise means per month per Station
+CTDsummary <- alongBay %>%
+  group_by(Station, Month) %>%
+  summarise(across(temperature:turbidity, \(x) mean(x, na.rm = TRUE)))
+
+# turbidity by month line
+CTDsummary %>%
+  ggplot(aes(x = Month, y = turbidity, color = Station, group = Station)) +
+  scale_color_viridis(discrete = TRUE) +
+  geom_point() +
+  geom_smooth(aes(x = Month, y = turbidity), method = 'loess', se = FALSE) 
+
+# Station turbidity by month individual
+CTDsummary %>%
+  ggplot(aes(x = Month, y = turbidity)) +
+  geom_point() +
+  geom_smooth() +
+  facet_wrap(~Station)
+
+# annual mean station turbidity
+CTDsummary %>%
+  group_by(Station) %>%
+  mutate(meanTurb = mean(turbidity)) %>%
+  ggplot(aes(x = Station, y = meanTurb)) +
+  geom_point()
+
+# annual mean station temp
+CTDsummary %>%
+  group_by(Station) %>%
+  mutate(meanTemp = mean(temperature)) %>%
+  ggplot(aes(x = Station, y = meanTemp)) +
+  geom_point()
+
+# annual mean station sal
+CTDsummary %>%
+  group_by(Station) %>%
+  mutate(meanSal = mean(salinity)) %>%
+  ggplot(aes(x = Station, y = meanSal)) +
+  geom_point()
+
+# correlations of abiotics
+
+CTDsummaryUngrouped %>%
+  ggplot(aes(x = temperature, y = salinity)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+CTDsummaryUngrouped %>%
+  ggplot(aes(x = temperature, y = log(turbidity))) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+CTDsummaryUngrouped %>%
+  ggplot(aes(x = salinity, y = log(turbidity))) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+
+# pairs 
+alongBay %>%
+  ggpairs(columns = 26:28, aes(color = as.character(year), alpha = 0.4),
+          lower = list(continuous = "smooth")) +
+  theme_bw() +
+  scale_color_viridis(discrete = TRUE, option = "D", begin = 0.2, end = 0.7) +
+  scale_fill_viridis(discrete = TRUE, option = "D", begin = 0.2, end = 0.7)
+
+
+
+##### OUTLIERS
+
+# TEMP OUTLIERS
+
+quartiles <- quantile(alongBay$temperature, probs=c(.25, .75), na.rm = TRUE)
+IQR <- IQR(alongBay$temperature, na.rm = TRUE, type = 8)
+
+Lower <- quartiles[1] - 1.5*IQR
+Upper <- quartiles[2] + 1.5*IQR 
+
+data_no_outlier_temp <- subset(alongBay, alongBay$temperature > Lower & alongBay$temperature < Upper)
+
+temp_outliers <- anti_join(alongBay, data_no_outlier_temp)
+
+
+# SALINITY
+
+quartiles <- quantile(alongBay$salinity, probs=c(.25, .75), na.rm = TRUE)
+IQR <- IQR(alongBay$salinity, na.rm = TRUE, type = 8)
+
+Lower <- quartiles[1] - 1.5*IQR
+Upper <- quartiles[2] + 1.5*IQR 
+
+data_no_outlier_sal <- subset(alongBay, alongBay$salinity > Lower & alongBay$salinity < Upper)
+
+sal_outliers <- anti_join(alongBay, data_no_outlier_sal)
+
+# TURBIDITY
+
+quartiles <- quantile(alongBay$turbidity, probs=c(.25, .75), na.rm = TRUE)
+IQR <- IQR(alongBay$turbidity, na.rm = TRUE, type = 8)
+
+Lower <- quartiles[1] - 1.5*IQR
+Upper <- quartiles[2] + 1.5*IQR 
+
+data_no_outlier_turb <- subset(alongBay, alongBay$turbidity > Lower & alongBay$turbidity < Upper)
+
+turb_outliers <- anti_join(alongBay, data_no_outlier_turb)
+
+# no outliers by Station
+data_no_outlier_temp %>%
+  group_by(Station) %>%
+  tally()
+
+data_no_outlier_sal %>%
+  group_by(Station) %>%
+  tally()
+
+data_no_outlier_turb %>%
+  group_by(Station) %>%
+  tally()
+
+alongBay %>%
+  group_by(Station) %>%
+  tally()
+
+
+
+##################### ALL ABOVE WITH OUTLIERS REMOVED
+
+alongBay_nooutliers <- alongBay
+alongBay_nooutliers <- alongBay_nooutliers %>%
+  mutate(temperature_no = replace(temperature, temperature >= 15.2467, NA)) %>%
+  mutate(salinity_no = replace(salinity, salinity <= 29.4569, NA)) %>%
+  mutate(turbidity_no = replace(turbidity, turbidity >= 1.5847, NA))
+
+
+# histogram of number of measurements per station
+alongBay_nooutliers %>%
+  ggplot() +
+  geom_histogram(aes(x = Station), stat = "count")
+
+# summarise means per month per Station
+CTDsummary <- alongBay_nooutliers %>%
+  group_by(Station, Month) %>%
+  summarise(across(temperature_no:turbidity_no, \(x) mean(x, na.rm = TRUE)))
+
+# turbidity by month line
+CTDsummary %>%
+  ggplot(aes(x = Month, y = turbidity_no, color = Station, group = Station)) +
+  scale_color_viridis(discrete = TRUE) +
+  geom_point() +
+  geom_smooth(aes(x = Month, y = turbidity_no), method = 'loess', se = FALSE) 
+
+# Station turbidity by month individual
+CTDsummary %>%
+  ggplot(aes(x = Month, y = turbidity_no)) +
+  geom_point() +
+  geom_smooth() +
+  facet_wrap(~Station)
+
+# annual mean station turbidity
+CTDsummary %>%
+  group_by(Station) %>%
+  mutate(meanTurb = mean(turbidity_no)) %>%
+  ggplot(aes(x = Station, y = meanTurb)) +
+  geom_point()
+
+# annual mean station temp
+CTDsummary %>%
+  group_by(Station) %>%
+  mutate(meanTemp = mean(temperature_no)) %>%
+  ggplot(aes(x = Station, y = meanTemp)) +
+  geom_point()
+
+# Station temp by month individual
+CTDsummary %>%
+  ggplot(aes(x = Month, y = temperature_no)) +
+  geom_point() +
+  geom_smooth() +
+  facet_wrap(~Station)
+
+# annual mean station sal
+CTDsummary %>%
+  group_by(Station) %>%
+  mutate(meanSal = mean(salinity_no)) %>%
+  ggplot(aes(x = Station, y = meanSal)) +
+  geom_point()
+
+# Station sal by month individual
+CTDsummary %>%
+  ggplot(aes(x = Month, y = salinity_no)) +
+  geom_point() +
+  geom_smooth() +
+  facet_wrap(~Station)
+
+# correlations of abiotics
+
+alongBay_nooutliers %>%
+  ggplot(aes(x = temperature_no, y = salinity_no)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+alongBay_nooutliers %>%
+  ggplot(aes(x = temperature_no, y = turbidity_no)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+alongBay_nooutliers %>%
+  ggplot(aes(x = salinity_no, y = turbidity_no)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+
+# pairs 
+alongBay_nooutliers %>%
+  select(temperature_no, salinity_no, turbidity_no, year) %>%
+  mutate(`Temperature (C)` = temperature_no) %>%
+  mutate(`Salinity (ppt)` = salinity_no) %>%
+  mutate(`Turbidity (NTU)` = turbidity_no) %>%
+  ggpairs(columns = 5:7, aes(color = as.character(year), alpha = 0.5,), 
+          lower = list(continuous = "smooth")) +
+  theme_bw() +
+  scale_color_viridis(discrete = TRUE, option = "D", begin = 0.2, end = 0.7) +
+  scale_fill_viridis(discrete = TRUE, option = "D", begin = 0.2, end = 0.7)
+
+
+############### WRITE SUMMARY CSV MEANS FOR PHOTO ANALYSIS
+
+abioticMeans <- alongBay_nooutliers %>%
+  select(Station, Date, Latitude_DD, Longitude_DD, Transect, 
+         Bottom.Depth, Depth, temperature_no, salinity_no, turbidity_no) %>%
+  mutate(year = year(Date)) %>%
+  group_by(Station, year) %>%
+  summarise(across(temperature_no:turbidity_no, list(mean = mean, sd = sd), na.rm = TRUE))
+  
+write_csv(abioticMeans, "data/abioticMeans.csv")
+
+
+
 
 ####
 #<<<<<<<<<<<<<<<<<<<<<<<<<<END OF SCRIPT>>>>>>>>>>>>>>>>>>>>>>>>#
@@ -179,13 +660,13 @@ library("rnaturalearthdata")
 world <- ne_countries(scale = "medium", returnclass = "sf")
 ggplot()
 
-AvgStations <- CTDsummaryUngrouped %>%
+AvgStations <- alongBay %>%
   group_by(Station) %>%
   summarise(across(Latitude_DD:Longitude_DD, mean, na.rm = TRUE))
 ggplot(data = world) +
   geom_sf() +
   geom_text(data= AvgStations,aes(x=Longitude_DD, Latitude_DD, label=Station),
-            color = "darkblue", fontface = "bold", check_overlap = TRUE, size = 2) +
+            color = "darkblue", fontface = "bold", check_overlap = FALSE, size = 2) +
   coord_sf(xlim = c(-150.5, -152.5), ylim = c(59.2, 59.8), expand = FALSE)
 
 
@@ -209,7 +690,7 @@ Upper <- quartiles[2] + 1.5*IQR
 
 data_no_outlier_temp <- subset(CTDsummaryUngrouped, CTDsummaryUngrouped$temperature > Lower & CTDsummaryUngrouped$temperature < Upper)
 
-dim(data_no_outlier_temp)
+temp_outliers <- anti_join(CTDsummaryUngrouped, data_no_outlier_temp)
 
 
 # SALINITY
@@ -222,7 +703,7 @@ Upper <- quartiles[2] + 1.5*IQR
 
 data_no_outlier_sal <- subset(CTDsummaryUngrouped, CTDsummaryUngrouped$salinity > Lower & CTDsummaryUngrouped$salinity < Upper)
 
-dim(data_no_outlier_sal)
+sal_outliers <- anti_join(CTDsummaryUngrouped, data_no_outlier_sal)
 
 # TURBIDITY
 
@@ -234,7 +715,7 @@ Upper <- quartiles[2] + 1.5*IQR
 
 data_no_outlier_turb <- subset(CTDsummaryUngrouped, CTDsummaryUngrouped$turbidity > Lower & CTDsummaryUngrouped$turbidity < Upper)
 
-dim(data_no_outlier_turb)
+turb_outliers <- anti_join(CTDsummaryUngrouped, data_no_outlier_turb)
 
 data_no_outlier_sal %>%
   group_by(Station) %>%
