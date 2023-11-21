@@ -636,17 +636,102 @@ alongBay_nooutliers %>%
 
 ############### WRITE SUMMARY CSV MEANS FOR PHOTO ANALYSIS
 
+# all stations
 abioticMeans <- alongBay_nooutliers %>%
-  select(Station, Date, Latitude_DD, Longitude_DD, Transect, 
-         Bottom.Depth, Depth, temperature_no, salinity_no, turbidity_no) %>%
+  select(Station, Date, Transect, 
+         Bottom.Depth, Depth, Latitude_DD, Longitude_DD, temperature_no, salinity_no, turbidity_no) %>%
   mutate(year = year(Date)) %>%
   group_by(Station, year) %>%
-  summarise(across(temperature_no:turbidity_no, list(mean = mean, sd = sd), na.rm = TRUE))
+  summarise(across(Latitude_DD:turbidity_no, list(mean = mean, sd = sd), na.rm = TRUE))
   
 write_csv(abioticMeans, "data/abioticMeans.csv")
 
+# 'area' stations
+areaMeans <- alongBay_nooutliers %>%
+  mutate(area = case_when(Longitude_DD < -151.8 ~ "1",
+                          Longitude_DD > -151.79 & Longitude_DD < -151.6 ~ "2",
+                          Longitude_DD > -151.59 & Longitude_DD < -151.4 ~ "3",
+                          Longitude_DD > -151.3 & Longitude_DD < -151.23 ~ "4")) %>%
+  select(Station, Date, Transect, Bottom.Depth, Depth, area, 
+         Latitude_DD, Longitude_DD, temperature_no, salinity_no, turbidity_no) %>%
+  mutate(Year = year(Date)) %>%
+  group_by(area, Year) %>%
+  summarise(across(temperature_no:turbidity_no, list(mean = mean, sd = sd), na.rm = TRUE)) %>%
+  filter(area %in% c(1:4))
+
+write_csv(areaMeans, "data/areaMeans.csv")
 
 
+###############################################################################
+# MAP OF ABIOTIC GRADIENTS                                                    #
+###############################################################################
+
+library(sf)
+library(leaflet)
+library(leafem)
+library(av)
+
+# Load basemap of KBAY
+kbay_basemap <- leaflet() %>% setView(lng = -151.45, lat = 59.55, zoom = 10)
+
+# make map
+
+# factorPal <- colorNumeric(viridis(n, option = "D"), domain = NULL)
+kbay_basemap %>% 
+  addTiles() %>%
+  addPolygons(data = habs,
+              fillColor = ~factorPal(Class),
+              fillOpacity = 0.4,
+              label = ~Class,
+              stroke = FALSE) %>%
+  addCircles(lng = algae$POINT_X, lat = algae$POINT_Y, 
+             radius = 150,
+             color = "limegreen",
+             opacity = 1,
+             fillOpacity = 1,
+             popup = paste("File:", algae$Video_file, "<br>",
+                           "Depth:", round(algae$depth,2), "m")) %>%
+  addCircles(lng = drops$POINT_X, lat = drops$POINT_Y, 
+             radius = 1,
+             color = "blue",
+             popup = paste("File:", algae$Video_file, "<br>",
+                           "Depth:", round(drops$depth,2), "m")) %>%
+  addCircles(lng = abby16$POINT_X, lat = abby16$POINT_Y, 
+             radius = 200,
+             color = "yellow",
+             opacity = 1,
+             fillOpacity = 1,
+             popup = paste("File:", abby16$Video_file, "<br>",
+                           "Depth:",  round(abby16$depth,2), "m")) %>%
+  addCircles(lng = abby17$POINT_X, lat = abby17$POINT_Y,
+             radius = 200,
+             color = "red",
+             opacity = 1,
+             fillOpacity = 1,
+             popup = paste("File:", abby17$Video_file, "<br>",
+                           "Depth:",  round(abby17$depth,2), "m")) %>%
+  addCircles(lng = abiotic$Longitude_DD_mean, lat = abiotic$Latitude_DD_mean,
+             radius = 200,
+             color = "white",
+             opacity = 1,
+             fillOpacity = 1,
+             popup = paste("Station:", abiotic$Station, "<br>",
+                           "Long:", abiotic$Longitude_DD_mean))
+
+
+
+
+
+world <- map_data("world")
+options(ggrepel.max.overlaps = Inf)
+ggplot() +
+  geom_map(data = world, map = world,aes(long, lat, map_id = region),color = "white", fill = "gray", size = 0.1)+
+  #scale_fill_continuous(data=abioticMeans, values=colorRampPalette(brewer.pal(9, 'Reds'))(length(abioticMeans$turbidity_no)))+
+  labs(title = "")+
+  geom_point(data = abioticMeans, aes(fill = turbidity_no)) +
+  scale_color_viridis_d(option = "plasma")+
+  xlab("Longitude") + ylab("Latitude")+
+  theme(legend.title= element_blank())
 
 ####
 #<<<<<<<<<<<<<<<<<<<<<<<<<<END OF SCRIPT>>>>>>>>>>>>>>>>>>>>>>>>#
