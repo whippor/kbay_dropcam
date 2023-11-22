@@ -114,6 +114,9 @@ bath1 <- read_sf("data/Kachemak_bathymetry_tiff/exportImage.tiff")
 # Load basemap of KBAY
 kbay_basemap <- leaflet() %>% setView(lng = -151.45, lat = 59.55, zoom = 10)
 
+# Import abiotic data
+abiotic <- read_csv("data/abioticMeans.csv")
+
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # MANIPULATE DATA                                                           ####
@@ -159,7 +162,14 @@ kbay_basemap %>%
              opacity = 1,
              fillOpacity = 1,
              popup = paste("File:", abby17$Video_file, "<br>",
-                           "Depth:",  round(abby17$depth,2), "m")) 
+                           "Depth:",  round(abby17$depth,2), "m")) %>%
+  addCircles(lng = abiotic$Longitude_DD_mean, lat = abiotic$Latitude_DD_mean,
+             radius = 200,
+             color = "white",
+             opacity = 1,
+             fillOpacity = 1,
+             popup = paste("Station:", abiotic$Station, "<br>",
+                           "Long:", abiotic$Longitude_DD_mean))
 
 # for all drop 2016 vs 2017
 
