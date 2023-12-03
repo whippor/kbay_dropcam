@@ -145,6 +145,16 @@ coralnetdata %>%
   theme_bw() +
   facet_grid(area~Year)
 
+# total kelp observed per area per year
+coralnetwide %>%
+  mutate(totalKelp = rowSums(across(c(split_KE:`3rib_KE`)))) %>%
+  mutate(Year = as.character(Year)) %>%
+  ggplot() +
+  geom_boxplot(aes(x = Year, y = totalKelp, fill = Year)) +
+  scale_fill_viridis(discrete = TRUE, begin = 0.2, end = 0.8) +
+  facet_wrap(.~area, nrow = 4, ncol = 1)
+  
+
 
 
 
