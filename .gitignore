@@ -37,4 +37,4 @@ vignettes/*.pdf
 
 # other types of files
 *.pdf
-.DS_Store
+*.DS_Store

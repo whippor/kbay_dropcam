@@ -204,6 +204,34 @@ ggplot(uscores1) +
        y=paste0("PC2: ",round(var_explained[2]*100,1),"%"))
 
 
+
+
+
+# HIGH RESOLUTION IMAGE
+# EXPORT AS 5000 X 4000
+
+# make final ggplot figure (Points scaled by 1.5)
+ggplot(uscores1) + 
+  scale_fill_viridis(discrete = TRUE, option = "F", begin = 0.5, end = 0.7, guide = guide_legend(title = "Year"), alpha = 0.5) +
+  scale_color_viridis(discrete = TRUE, option = "F", begin = 0.4, end = 0.8, guide = guide_legend(title = "Year"))  +
+  geom_point(aes(x = PC1*1.5, y = PC2*1.5, fill = as.character(Year), color = as.character(Year),
+                 shape = as.character(area)), size = 40) +
+  geom_segment(data = vscores, aes(x = 0, y = 0, xend = PC1, yend = PC2), arrow=arrow(length=unit(2,"cm")),
+               alpha = 0.75, color = 'grey30', size = 5) +
+  geom_text(data = vscores, aes(x = PC1, y = PC2, label = rownames(vscores)),
+            col = 'red', size = 30) +
+  geom_text(data = vscores[1:6,], aes(x = PC1, y= PC2, label = rownames(vscores[1:6,])),
+            col = "black", size = 30) +
+  scale_shape_manual(values = c(21, 24, 25, 22)) +
+  labs(shape = "Area") +
+  theme_bw() +
+  theme(strip.text.y = element_text(angle = 0)) +
+  labs(x=paste0("PC1: ",round(var_explained[1]*100,1),"%"),
+       y=paste0("PC2: ",round(var_explained[2]*100,1),"%")) +
+  theme(axis.text=element_text(size=60),
+        axis.title=element_text(size=80,face="bold"),
+        legend.text=element_text(size=100))
+
 ################### nMDS
 
 # run the nMDS
