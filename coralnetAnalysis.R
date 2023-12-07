@@ -39,6 +39,9 @@ library(viridis)
 library(vegan)
 library(ggfortify)
 
+# fuction for "%notin%
+`%notin%` <- Negate(`%in%`)
+
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # READ IN AND PREPARE DATA                                                  ####
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -77,6 +80,8 @@ coralnetdata <- coralnetdataraw %>%
 
 # labelset from CoralNet
 labelset <- read_csv("data/photoAnalysis/KBAY_labelset.csv")
+labelset <- labelset %>%
+  rename("Label" = "code")
 
 # Import abiotic data
 abiotic <- read_csv("data/areaMeans.csv")
@@ -113,23 +118,71 @@ coralnetwideALL <- coraltemp %>%
 # MANIPULATE DATA                                                           ####
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+# size = 3000 x 5000
 # total number of each category observed across all photos
-ggplot(coralnetdata, aes(x = forcats::fct_infreq(Label))) +
+coralnetdata %>%
+  filter(Label %notin% c("fish_MS",
+                      "eel_SG",
+                      "SStar_MS",
+                      "urchin_MS",
+                      "UNIdent",
+                      "bushy_RE",
+                      "anem_SI",
+                      "cord_KE",
+                      "encru_SI",
+                      "gastro_MS",
+                      "SponSol_SI")) %>%
+  mutate(Category = case_when(Label == "sugar_KE" ~ "Hedophyllum",
+                              Label == "split_KE" ~ "Laminaria",
+                              Label == "broad_KE" ~ "Pleurophycus",
+                              Label == "3rib_KE" ~ "Cymathere",
+                              Label == "coland_KE" ~ "Agarum",
+                              Label == "ribbn_KE" ~ "Alaria",
+                              TRUE ~ Label)) %>%
+  mutate(Group = case_when(Category %in% c("Hedophyllum",
+                                        "Laminaria",
+                                        "Pleurophycus",
+                                        "Cymathere",
+                                        "Agarum",
+                                        "Alaria") ~ "Kelp",
+                           TRUE ~ "Other")) %>%
+ggplot(aes(x = forcats::fct_infreq(Category), fill = Group)) +
   geom_bar() +
   theme_classic() +
-  labs(x="label", y="count") +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+  scale_fill_viridis(discrete = TRUE, option = "D", begin = 0.6, end = 0) +
+  labs(x="Category", y="Count") +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  theme(axis.text=element_text(size=60),
+      axis.title=element_text(size=80,face="bold"),
+      legend.text=element_text(size=80),
+      legend.title = element_text(size = 60)) + 
+  theme(axis.title.x = element_text(margin = margin(t = 20)))
 
+
+# size 5000 x 4000
 # mean amount of kelp detected per photo
 coralnetdata %>%
   filter(Label %in% c("split_KE", "coland_KE", "sugar_KE", "broad_KE", "3rib_KE", "ribbn_KE")) %>%
-  group_by(Name, Label) %>%
-  count(Label) %>%
-ggplot(aes(x = Label, y = n)) +
-  geom_boxplot() +
-  geom_jitter(width = 0.1, shape = 5) +
-  labs(x = "algal group", y = "count") +
-  theme_classic() 
+  mutate(Category = case_when(Label == "sugar_KE" ~ "Hedophyllum",
+                              Label == "split_KE" ~ "Laminaria",
+                              Label == "broad_KE" ~ "Pleurophycus",
+                              Label == "3rib_KE" ~ "Cymathere",
+                              Label == "coland_KE" ~ "Agarum",
+                              Label == "ribbn_KE" ~ "Alaria",
+                              TRUE ~ Label)) %>%
+  group_by(Name, Category) %>%
+  count(Category) %>%
+ggplot(aes(x = Category, y = n, fill = Category)) +
+  geom_boxplot(lwd = 5) +
+  scale_fill_viridis(discrete = TRUE, option = "D", begin = 0.6, end = 0.9) +
+  geom_jitter(width = 0.1, shape = 16, size = 20, alpha = 0.7) +
+  labs(x = "Algal Group", y = "Count")  +
+  theme_classic() +
+  theme(legend.position="none") +
+  theme(axis.text=element_text(size=60),
+        axis.title=element_text(size=80,face="bold")) + 
+  theme(axis.title.x = element_text(margin = margin(t = 20)))
+
 
 # total kelp cover by area
 coralnetdata %>%
