@@ -176,7 +176,7 @@ ggplot(aes(x = Category, y = n, fill = Category)) +
   geom_boxplot(lwd = 5) +
   scale_fill_viridis(discrete = TRUE, option = "D", begin = 0.6, end = 0.9) +
   geom_jitter(width = 0.1, shape = 16, size = 20, alpha = 0.7) +
-  labs(x = "Algal Group", y = "Count")  +
+  labs(x = "Kelp Genus", y = "Point Count Abundance")  +
   theme_classic() +
   theme(legend.position="none") +
   theme(axis.text=element_text(size=60),
