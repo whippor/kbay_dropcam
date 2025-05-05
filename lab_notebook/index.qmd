@@ -1,0 +1,10 @@
+---
+title: "kbay_dropcam Lab Notebook"
+format: html
+---
+
+# 📘 kbay_dropcam
+
+This is the lab notebook for **kbay_dropcam**.
+
+- [Return to Central Lab Hub](../../lab_notebook_hub/index.qmd)
